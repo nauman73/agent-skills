@@ -1,0 +1,12 @@
+# These skills ship Python scripts and Markdown that get copied into other people's
+# repos and, sometimes, onto Linux boxes.
+#
+# Without this, a clone on Windows with core.autocrlf=true produces CRLF working
+# copies, and a script copied from here into someone's repo can fail on their
+# machine with `bad interpreter: ...^M` - an error that reads as "the file is missing".
+#
+# Pinned in the repo so it does not depend on anyone's local git config.
+* text=auto eol=lf
+*.py text eol=lf
+*.md text eol=lf
+*.sh text eol=lf

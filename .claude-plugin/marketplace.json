@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
+  "name": "nauman73",
+  "description": "Nauman Hameed's agent skills",
+  "owner": {
+    "name": "Nauman Hameed",
+    "url": "https://github.com/nauman73"
+  },
+  "plugins": [
+    {
+      "name": "agent-skills",
+      "displayName": "Nauman's Agent Skills",
+      "source": "./",
+      "description": "Practical skills for engineering work with coding agents.",
+      "author": {
+        "name": "Nauman Hameed",
+        "url": "https://github.com/nauman73"
+      },
+      "homepage": "https://github.com/nauman73/agent-skills",
+      "repository": "https://github.com/nauman73/agent-skills",
+      "license": "MIT",
+      "category": "productivity",
+      "keywords": [
+        "skills",
+        "session-handoff",
+        "context-management"
+      ]
+    }
+  ]
+}
