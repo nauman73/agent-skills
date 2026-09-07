@@ -124,6 +124,25 @@ A handoff is a *snapshot* — it intentionally drops the running narrative. But 
 
 After the handoff doc is written and **before** you print the "To resume…" line, run this short flow.
 
+### Locating the bundled scripts
+
+Steps 4 and 5 run Python scripts that ship inside this skill's own folder. **Resolve
+them relative to the directory this `SKILL.md` was loaded from** — written below as
+`<skill-dir>` — never from a hardcoded root. The skill is installed in different
+places depending on how it arrived:
+
+| Installed as | `<skill-dir>` |
+|---|---|
+| User-level skill | `~/.claude/skills/session-handoff` |
+| Project-level skill | `<project-root>/.claude/skills/session-handoff` |
+| Claude Code plugin | `~/.claude/plugins/cache/<marketplace>/<plugin>/<version>/skills/session-handoff` |
+| Copilot / Cursor / Codex | `<project-root>/.agents/skills/session-handoff`, or that agent's global skills folder |
+
+Assuming `~/.claude/skills/...` breaks every case but the first. If you cannot tell
+where the skill folder is, locate `scripts/copilot_discover.py` by searching for it
+rather than guessing a root, and if it genuinely is not on disk, say so plainly
+instead of running a path you have not verified.
+
 ### Step 1 — ask the user
 
 Use `AskUserQuestion` with a single question:
@@ -218,10 +237,10 @@ Get-ChildItem $projDir -Filter *.jsonl | Sort-Object LastWriteTime -Descending |
 Copilot Chat stores each session as `%APPDATA%\Code\User\workspaceStorage\<hash>\chatSessions\<session-id>.jsonl`. The `<hash>` is opaque, and the active session id is not exposed via an env var — both must be resolved from VS Code's own state. The bundled `copilot_discover.py` does all of this; do not hand-roll it.
 
 ```powershell
-python "$env:USERPROFILE\.claude\skills\session-handoff\scripts\copilot_discover.py" --project-root "<project-root>"
+python "<skill-dir>/scripts/copilot_discover.py" --project-root "<project-root>"
 ```
 
-…or on POSIX, `python ~/.claude/skills/session-handoff/scripts/copilot_discover.py --project-root <project-root>`. It prints JSON with `path`, `session_id`, `title`, `method`, and `workspace_hash`. How it works (and what to surface to the user):
+It prints JSON with `path`, `session_id`, `title`, `method`, and `workspace_hash`. How it works (and what to surface to the user):
 
 1. **Workspace hash** — it scans every `workspaceStorage/*/workspace.json` and matches the recorded `folder` URI against `--project-root`. Deterministic.
 2. **Active session (primary, `method: "active-pointer"`)** — it reads `state.vscdb` (read-only, lock-safe even while VS Code is running) for the focused chat under `memento/interactive-session-view-copilot` and base64-decodes the session id. Exact, even with several chats open.
@@ -242,7 +261,7 @@ The action depends on the Step 2 format choice and the Step 1.5 environment. All
 **If `.md` was chosen — Claude Code** — invoke `jsonl_to_md.py`, which walks the JSONL deterministically and renders a readable Markdown log (rich metadata header) without spending Claude turns or context:
 
 ```powershell
-python "$env:USERPROFILE\.claude\skills\session-handoff\scripts\jsonl_to_md.py" `
+python "<skill-dir>/scripts/jsonl_to_md.py" `
   "<source-jsonl-path>" "<destination-md-path>" `
   --session-name "<session name>" `
   --participants "<User Name> (<email>) · Claude Code (<model>, <context window>)" `
@@ -260,7 +279,7 @@ Its **active-work definition**: a *turn* starts at each human user prompt; its a
 **If `.md` was chosen — GitHub Copilot** — invoke `copilot_jsonl_to_md.py`. Copilot's JSONL is a different, event-sourced format, so it has its own converter:
 
 ```powershell
-python "$env:USERPROFILE\.claude\skills\session-handoff\scripts\copilot_jsonl_to_md.py" `
+python "<skill-dir>/scripts/copilot_jsonl_to_md.py" `
   "<source-jsonl-path>" "<destination-md-path>" `
   --session-name "<override title — optional>" `
   --participants "<optional participants row>" `

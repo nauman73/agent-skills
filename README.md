@@ -64,6 +64,10 @@ By default it symlinks into each agent's directory; pass `--copy` if you would r
 have independent copies to edit freely, and `-y` to skip the prompts. Repeat `--skill`
 once per skill rather than listing several after one flag.
 
+> **Note:** that CLI reports install telemetry for repositories GitHub confirms are
+> public, which includes this one. Set `DISABLE_TELEMETRY=1` or `DO_NOT_TRACK=1` to
+> turn it off, or use the plugin or clone-and-copy routes, which do not involve it.
+
 ### Or just clone and copy
 
 They are only markdown and a few Python scripts:
