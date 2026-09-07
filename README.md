@@ -50,16 +50,19 @@ the whole set any time.
 ### As editable files, in any agent
 
 The [`skills`](https://github.com/vercel-labs/skills) CLI installs skills into
-whatever directory your agent expects:
+whatever directory your agent expects — it discovers this repo's root-level `skills/`
+folder natively, and also reads the plugin manifests in `.claude-plugin/`.
 
 ```bash
-npx skills add nauman73/agent-skills --list    # see what's here first
-npx skills add nauman73/agent-skills           # everything
+npx skills add nauman73/agent-skills --list                      # see what's here first
+npx skills add nauman73/agent-skills --skill session-handoff     # just the one
+npx skills add nauman73/agent-skills -a claude-code -a cursor    # pick your agents
+npx skills add nauman73/agent-skills -g                          # install globally
 ```
 
-See that project's README for the supported agents and flags. This route writes real
-files you can edit, which is what I would recommend once you know which skills you
-keep reaching for.
+By default it symlinks into each agent's directory; pass `--copy` if you would rather
+have independent copies to edit freely, and `-y` to skip the prompts. Repeat `--skill`
+once per skill rather than listing several after one flag.
 
 ### Or just clone and copy
 
@@ -90,15 +93,23 @@ For the last two, restart your session (or run `/skills`) and they will show up.
 Skills are just markdown. There is no Claude-specific runtime here, so most of this
 works anywhere an agent can read files.
 
-- **Claude Code** — `~/.claude/skills/<name>/` for every project, or
-  `.claude/skills/<name>/` inside one repo. Or install as a plugin, above.
-- **GitHub Copilot** — Copilot can run Claude Code skills directly. `session-handoff`
-  is built for this and handles Copilot's chat transcript format explicitly.
-- **Cursor, Codex, Cline, Windsurf and the rest** — the `npx skills` route above
-  installs into each one's expected location.
-- **Anything with no skills mechanism** — the boring fallback works: keep the folder
-  in your repo and point at it from `AGENTS.md` (or the equivalent), telling the
-  agent to read the matching `SKILL.md` before starting that kind of work.
+Copy a skill folder to the location your agent reads, or let `npx skills` do it:
+
+| Agent | Per-project | Global |
+|---|---|---|
+| Claude Code | `.claude/skills/` | `~/.claude/skills/` |
+| GitHub Copilot | `.agents/skills/` | `~/.copilot/skills/` |
+| Cursor | `.agents/skills/` | `~/.cursor/skills/` |
+| Codex | `.agents/skills/` | `~/.codex/skills/` |
+
+Copilot can run Claude Code skills directly, and `session-handoff` is built for that
+— it handles Copilot's own chat transcript format explicitly, not just Claude Code's.
+The `skills` CLI supports many more agents than the four above; run it to see the
+current list.
+
+**Anything with no skills mechanism** still works, boringly: keep the folder in your
+repo and point at it from `AGENTS.md` (or the equivalent), telling the agent to read
+the matching `SKILL.md` before starting that kind of work.
 
 Two things to adjust when you port them:
 
