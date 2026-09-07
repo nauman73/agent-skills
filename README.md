@@ -92,18 +92,14 @@ reference it from `AGENTS.md`, instructing the agent to consult the relevant
 
 ## Portability
 
-`session-handoff` is written against Claude Code, and mostly survives the trip
-elsewhere:
+These skills are written and used against Claude Code, so that is where they are
+proven. The procedures themselves are just markdown and hold up on any agent that
+can read a file and run a command.
 
-- **Saving and resuming a handoff works on any agent.** It reads and writes markdown
-  and shells out to `git status` and `git log`. Nothing more.
-- **Transcript archiving understands two chat formats:** Claude Code's and GitHub
-  Copilot's. Elsewhere the handoff is unaffected — there is just no transcript to
-  attach, because every agent stores its history somewhere different, if at all.
-- **`AskUserQuestion` is Claude Code's.** It presents the archive choices as buttons.
-  An agent lacking it should ask the same things in prose; nothing breaks.
-- **Bundled scripts locate themselves** relative to the loaded skill folder, so an
-  unusual install path needs no edits.
+What does not travel automatically is a dependency on something specific to Claude
+Code — a tool like `AskUserQuestion`, or a path such as `~/.claude/projects/`. Where
+a skill has one, its own README says which parts are affected and what the
+alternative is, rather than leaving you to find out mid-task.
 
 ## Before you run any of this
 

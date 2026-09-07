@@ -78,11 +78,27 @@ to "most recently modified" only when that fails — and they tell you when they
 back, since that fallback can pick the wrong file if you have two sessions open in
 the same folder.
 
-## Requirements
+## Requirements and portability
 
-Nothing for the handoff itself. The optional transcript archive runs Python 3
-(standard library only — no pip installs) via the scripts in
-[`scripts/`](scripts/).
+Saving and resuming a handoff needs nothing beyond the agent itself: it reads and
+writes markdown and shells out to `git status` and `git log`. That part works
+anywhere.
+
+The optional transcript archive needs Python 3 — standard library only, no pip
+installs — via the scripts in [`scripts/`](scripts/). Those scripts locate
+themselves relative to the loaded skill folder, so it does not matter whether the
+skill arrived as a user-level install, a project-level one, a Claude Code plugin,
+or under an agent's `.agents/skills/` directory.
+
+Two Claude Code specifics are worth knowing if you run this elsewhere:
+
+- **Archiving only understands Claude Code and Copilot chat history.** As above,
+  those are the two formats the scripts can find and parse. On Cursor, Codex or
+  anything else, saving and resuming are unaffected — there is simply no transcript
+  to attach, because each agent keeps its history somewhere different, if at all.
+- **`AskUserQuestion` is a Claude Code tool.** It is what presents the archive
+  choices as buttons. An agent without it should ask the same questions in prose;
+  the flow degrades rather than breaking.
 
 ## The procedure
 
