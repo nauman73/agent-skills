@@ -24,6 +24,7 @@ of those spans; idle time is total wall-clock minus active.
 Usage:
     python session_stats.py <input.jsonl>           # human summary
     python session_stats.py <input.jsonl> --json     # JSON
+    python session_stats.py --help                   # this text
 
 Exit codes:
     0 = success
@@ -193,6 +194,12 @@ def compute(src: Path) -> SessionStats:
 
 def main() -> int:
     args = sys.argv[1:]
+    if "-h" in args or "--help" in args:
+        # Usage goes to stdout with rc=0 so callers can distinguish "you asked
+        # for help" from the no-arguments error path below, which prints the
+        # same text to stderr with rc=1.
+        print(__doc__)
+        return 0
     as_json = "--json" in args
     positional = [a for a in args if not a.startswith("--")]
     if len(positional) != 1:
