@@ -27,13 +27,34 @@ parts that don't match how you work.
 
 ### Claude Code plugin
 
+Type these **at the Claude Code prompt** — they are Claude Code commands, not shell
+commands:
+
 ```
 /plugin marketplace add nauman73/agent-skills
 /plugin install nh-workbench@nauman73
 ```
 
-Skills arrive namespaced — `/nh-workbench:session-handoff`. New ones reach you via
-`/plugin marketplace update`, and `/plugin` turns the set off again.
+Or run the equivalents **in your shell**, which is easier to script and shows plain
+output:
+
+```bash
+claude plugin marketplace add nauman73/agent-skills
+claude plugin install nh-workbench@nauman73          # --scope user|project|local
+claude plugin details nh-workbench                   # inventory + token cost
+claude plugin list
+```
+
+Skills arrive namespaced — `/nh-workbench:session-handoff`. Start a new session
+afterwards; a running one will not see them. Later on, `marketplace update` pulls new
+skills, `claude plugin update nh-workbench` moves to the latest version, and
+`/plugin` or `claude plugin uninstall nh-workbench` removes the set.
+
+> **Already have one of these skills in `~/.claude/skills/`?** You will then have it
+> twice — once unnamespaced from your own folder, once as
+> `/nh-workbench:session-handoff` — with both descriptions loaded at startup and no
+> clear answer as to which fires. Move your copy aside first, or install to
+> `--scope project` in a repo you are only testing in.
 
 > **`Permission denied (publickey)` on the first command?** The `owner/repo` form is
 > resolved over SSH, and yours isn't authenticating. Newer Claude Code builds retry
@@ -45,8 +66,9 @@ Skills arrive namespaced — `/nh-workbench:session-handoff`. New ones reach you
 
 ### The `skills` CLI, for any agent
 
-[`skills`](https://github.com/vercel-labs/skills) finds this repo's root-level
-`skills/` directory on its own, and reads the manifests in `.claude-plugin/` too:
+In your shell. [`skills`](https://github.com/vercel-labs/skills) finds this repo's
+root-level `skills/` directory on its own, and reads the manifests in
+`.claude-plugin/` too:
 
 ```bash
 npx skills add nauman73/agent-skills --list                      # inspect first
@@ -65,7 +87,7 @@ list.
 
 ### By hand
 
-A skill is a directory. Put it where your agent looks:
+In your shell. A skill is a directory — put it where your agent looks:
 
 ```bash
 git clone https://github.com/nauman73/agent-skills.git
