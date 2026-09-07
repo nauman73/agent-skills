@@ -1,21 +1,21 @@
 # Nauman's Agent Skills
 
-Practical skills for engineering work with coding agents. Straight out of the
-`.claude/skills/` folder I actually work in.
+Skills I use for day-to-day engineering work with coding agents, published one at a
+time as each proves itself on real tasks.
 
-## What this is
+## What a skill is
 
-A skill is a folder with a `SKILL.md` in it: a name, a description of *when* to use
-it, and the procedure the agent should follow. Your agent reads only the description
-at startup and pulls in the full body when the work matches — which is why a set of
-skills scales where one ever-growing instructions file does not.
+A folder containing a `SKILL.md`: frontmatter naming the skill and describing the
+situations it applies to, followed by the procedure itself. The agent keeps only that
+description in context and loads the body when your request matches it.
 
-Nothing here is a framework. Each skill is plain markdown you can read in a few
-minutes, disagree with, and edit. Take the ones that fit how you work and rewrite
-the rest.
+The practical consequence is that a skill costs you almost nothing until it fires.
+Instructions you paste into one ever-growing project file are paid for on every
+single turn, whether relevant or not — which is why that file eventually gets ignored
+and a folder of skills does not.
 
-This repo is published gradually — skills land here once they have earned their
-keep in real work and carry no employer- or project-specific detail.
+Everything here is markdown and a little Python. Read it, argue with it, change the
+parts that don't match how you work.
 
 ## The skills
 
@@ -23,81 +23,60 @@ keep in real work and carry no employer- or project-specific detail.
 |---|---|
 | [`session-handoff`](skills/session-handoff/) | Carries one task across a cleared or compacted session. Writes a self-contained snapshot — goal, state, next step, decisions, blockers — and can archive the full Claude Code or GitHub Copilot transcript alongside it |
 
-## Bring them in
+## Installing
 
-### As a Claude Code plugin (easiest, stays updated)
-
-Two commands inside Claude Code:
+### Claude Code plugin
 
 ```
 /plugin marketplace add nauman73/agent-skills
 /plugin install agent-skills@nauman73
 ```
 
-Plugin skills are namespaced, so you invoke them as `/agent-skills:session-handoff`.
-`/plugin marketplace update` pulls new skills as I add them, and `/plugin` disables
-the whole set any time.
+Skills arrive namespaced — `/agent-skills:session-handoff`. New ones reach you via
+`/plugin marketplace update`, and `/plugin` turns the set off again.
 
-> **If the first command fails with `Permission denied (publickey)`:** the
-> `owner/repo` shorthand prefers SSH, and your SSH key is not authenticating to
-> GitHub. Recent Claude Code versions fall back to HTTPS on their own; if yours does
-> not, pass the HTTPS URL directly, which needs no key:
+> **`Permission denied (publickey)` on the first command?** The `owner/repo` form is
+> resolved over SSH, and yours isn't authenticating. Newer Claude Code builds retry
+> over HTTPS by themselves; if yours doesn't, name the protocol explicitly:
 >
 > ```
 > /plugin marketplace add https://github.com/nauman73/agent-skills.git
 > ```
 
-### As editable files, in any agent
+### The `skills` CLI, for any agent
 
-The [`skills`](https://github.com/vercel-labs/skills) CLI installs skills into
-whatever directory your agent expects — it discovers this repo's root-level `skills/`
-folder natively, and also reads the plugin manifests in `.claude-plugin/`.
+[`skills`](https://github.com/vercel-labs/skills) finds this repo's root-level
+`skills/` directory on its own, and reads the manifests in `.claude-plugin/` too:
 
 ```bash
-npx skills add nauman73/agent-skills --list                      # see what's here first
-npx skills add nauman73/agent-skills --skill session-handoff     # just the one
-npx skills add nauman73/agent-skills -a claude-code -a cursor    # pick your agents
-npx skills add nauman73/agent-skills -g                          # install globally
+npx skills add nauman73/agent-skills --list                      # inspect first
+npx skills add nauman73/agent-skills --skill session-handoff     # one skill
+npx skills add nauman73/agent-skills -a claude-code -a cursor    # chosen agents
+npx skills add nauman73/agent-skills -g                          # global install
 ```
 
-By default it symlinks into each agent's directory; pass `--copy` if you would rather
-have independent copies to edit freely, and `-y` to skip the prompts. Repeat `--skill`
-once per skill rather than listing several after one flag.
+Installs are symlinks by default — add `--copy` for independent files you can edit
+freely, and `-y` to run unattended. `--skill` repeats per skill; it does not take a
+list.
 
-> **Note:** that CLI reports install telemetry for repositories GitHub confirms are
-> public, which includes this one. Set `DISABLE_TELEMETRY=1` or `DO_NOT_TRACK=1` to
-> turn it off, or use the plugin or clone-and-copy routes, which do not involve it.
+> **Note:** this CLI reports install telemetry for repositories GitHub confirms are
+> public, which includes this one. `DISABLE_TELEMETRY=1` or `DO_NOT_TRACK=1` turns it
+> off, and neither the plugin nor the manual route below involves it.
 
-### Or just clone and copy
+### By hand
 
-They are only markdown and a few Python scripts:
+A skill is a directory. Put it where your agent looks:
 
 ```bash
 git clone https://github.com/nauman73/agent-skills.git
 
-# into a project
-cp -r agent-skills/skills/session-handoff your-project/.claude/skills/
-
-# or globally, for every project
-cp -r agent-skills/skills/session-handoff ~/.claude/skills/
+cp -r agent-skills/skills/session-handoff your-project/.claude/skills/   # one project
+cp -r agent-skills/skills/session-handoff ~/.claude/skills/              # everywhere
 ```
 
-### Or ask your agent
+Start a new session, or run `/skills`, and it will be picked up.
 
-This works fine too:
-
-> Clone https://github.com/nauman73/agent-skills, look at the skills in `skills/`,
-> and copy the ones that fit this project into my `.claude/skills/` folder. Tell me
-> which ones you picked and why.
-
-For the last two, restart your session (or run `/skills`) and they will show up.
-
-## Using these with other agents
-
-Skills are just markdown. There is no Claude-specific runtime here, so most of this
-works anywhere an agent can read files.
-
-Copy a skill folder to the location your agent reads, or let `npx skills` do it:
+## Where each agent looks
 
 | Agent | Per-project | Global |
 |---|---|---|
@@ -106,36 +85,33 @@ Copy a skill folder to the location your agent reads, or let `npx skills` do it:
 | Cursor | `.agents/skills/` | `~/.cursor/skills/` |
 | Codex | `.agents/skills/` | `~/.codex/skills/` |
 
-Copilot can run Claude Code skills directly, and `session-handoff` is built for that
-— it handles Copilot's own chat transcript format explicitly, not just Claude Code's.
-The `skills` CLI supports many more agents than the four above; run it to see the
-current list.
+The `skills` CLI covers many more than these four; run it to see the current list.
+Where an agent has no skills mechanism at all, commit the folder to your repo and
+reference it from `AGENTS.md`, instructing the agent to consult the relevant
+`SKILL.md` before that kind of task.
 
-**Anything with no skills mechanism** still works, boringly: keep the folder in your
-repo and point at it from `AGENTS.md` (or the equivalent), telling the agent to read
-the matching `SKILL.md` before starting that kind of work.
+## Portability
 
-What to expect on a non-Claude agent:
+`session-handoff` is written against Claude Code, and mostly survives the trip
+elsewhere:
 
-- **Handoff save and resume work anywhere.** They only read and write markdown and
-  run `git status` / `git log`. Nothing is Claude-specific.
-- **Transcript archiving is implemented for Claude Code and GitHub Copilot only.**
-  Those are the two chat-history formats the bundled scripts know how to find and
-  read. On other agents the handoff itself is unaffected — there is simply no
-  transcript to attach, since each one stores its history differently or not at all.
-- **`AskUserQuestion` is a Claude Code tool.** The skill uses it to offer the
-  archive options as multiple choice. An agent without it should just ask in plain
-  text; the flow degrades rather than breaks.
-- **Bundled script paths resolve themselves.** `SKILL.md` locates its own `scripts/`
-  folder relative to wherever the skill was loaded, so a non-default install
-  location needs no edit.
+- **Saving and resuming a handoff works on any agent.** It reads and writes markdown
+  and shells out to `git status` and `git log`. Nothing more.
+- **Transcript archiving understands two chat formats:** Claude Code's and GitHub
+  Copilot's. Elsewhere the handoff is unaffected — there is just no transcript to
+  attach, because every agent stores its history somewhere different, if at all.
+- **`AskUserQuestion` is Claude Code's.** It presents the archive choices as buttons.
+  An agent lacking it should ask the same things in prose; nothing breaks.
+- **Bundled scripts locate themselves** relative to the loaded skill folder, so an
+  unusual install path needs no edits.
 
-## Read them before you trust them
+## Before you run any of this
 
-A skill you have not read is just a longer prompt you do not control. Each folder
-has a `README.md` explaining what the skill is for and why it works the way it does,
-and a `SKILL.md` with the procedure itself.
+These skills act on your repository, and one of them can copy your session history
+into it. That is worth understanding rather than trusting. Each folder holds a
+`README.md` covering what the skill is for and the reasoning behind how it behaves,
+next to the `SKILL.md` the agent actually executes.
 
-## License
+## Licence
 
-MIT, see [LICENSE](LICENSE). Take them, fork them, rewrite them.
+[MIT](LICENSE). Fork it, strip it, rewrite it.

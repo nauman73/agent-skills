@@ -86,7 +86,10 @@ Nothing for the handoff itself. The optional transcript archive runs Python 3
 
 ## The procedure
 
-[`SKILL.md`](SKILL.md) is the full instruction set the agent follows, including the
-handoff template, the transcript flow step by step, and the quality checks it runs
-before declaring done. It is worth reading before you rely on it — a skill you have
-not read is just a longer prompt you do not control.
+[`SKILL.md`](SKILL.md) is what the agent actually executes: the handoff template,
+the transcript flow step by step, and the checks it runs against its own output
+before calling the job done.
+
+Read it before you rely on it. This skill writes files into your repository and,
+if you turn archiving on, copies your session history into it as well — decide for
+yourself that you want both.

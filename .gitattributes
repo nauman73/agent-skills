@@ -1,12 +1,12 @@
-# These skills ship Python scripts and Markdown that get copied into other people's
-# repos and, sometimes, onto Linux boxes.
+# Every Python script here starts with `#!/usr/bin/env python3`, and these files are
+# meant to be copied out of this repo into other people's projects - including WSL
+# and Linux checkouts.
 #
-# Without this, a clone on Windows with core.autocrlf=true produces CRLF working
-# copies, and a script copied from here into someone's repo can fail on their
-# machine with `bad interpreter: ...^M` - an error that reads as "the file is missing".
+# A shebang line ending in CRLF makes the kernel look for an interpreter named
+# "python3\r", which fails as `bad interpreter: python3^M`. Cloning on Windows with
+# core.autocrlf=true is enough to cause it.
 #
-# Pinned in the repo so it does not depend on anyone's local git config.
+# Setting it here rather than relying on contributors' local git config.
 * text=auto eol=lf
 *.py text eol=lf
 *.md text eol=lf
-*.sh text eol=lf
