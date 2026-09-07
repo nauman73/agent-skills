@@ -52,7 +52,9 @@ if (Test-Path -LiteralPath $existingReadme) {
     $keptReadme = Get-Content -LiteralPath $existingReadme -Raw
 }
 
-if ($PSCmdlet.ShouldProcess($to, "replace with contents of $from")) {
+$didSync = $PSCmdlet.ShouldProcess($to, "replace with contents of $from")
+
+if ($didSync) {
     if (Test-Path -LiteralPath $to) {
         Remove-Item -LiteralPath $to -Recurse -Force
     }
@@ -74,7 +76,10 @@ if ($PSCmdlet.ShouldProcess($to, "replace with contents of $from")) {
     }
 }
 
-if (-not (Test-Path -LiteralPath $to)) {
+if (-not $didSync) {
+    # Test-Path is the wrong guard here: with -WhatIf over an existing copy the
+    # folder is still there, and reporting a sync that did not happen is worse
+    # than saying nothing.
     Write-Host "Nothing written (-WhatIf)." -ForegroundColor Yellow
     return
 }
