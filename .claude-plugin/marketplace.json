@@ -8,7 +8,7 @@
   },
   "plugins": [
     {
-      "name": "agent-skills",
+      "name": "nh-workbench",
       "displayName": "Nauman's Agent Skills",
       "source": "./",
       "description": "Practical skills for engineering work with coding agents.",

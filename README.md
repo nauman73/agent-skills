@@ -29,10 +29,10 @@ parts that don't match how you work.
 
 ```
 /plugin marketplace add nauman73/agent-skills
-/plugin install agent-skills@nauman73
+/plugin install nh-workbench@nauman73
 ```
 
-Skills arrive namespaced — `/agent-skills:session-handoff`. New ones reach you via
+Skills arrive namespaced — `/nh-workbench:session-handoff`. New ones reach you via
 `/plugin marketplace update`, and `/plugin` turns the set off again.
 
 > **`Permission denied (publickey)` on the first command?** The `owner/repo` form is
