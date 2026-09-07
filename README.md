@@ -115,12 +115,20 @@ current list.
 repo and point at it from `AGENTS.md` (or the equivalent), telling the agent to read
 the matching `SKILL.md` before starting that kind of work.
 
-Two things to adjust when you port them:
+What to expect on a non-Claude agent:
 
-- **Slash-command syntax.** Skills that reference each other by name assume Claude
-  Code's invocation. Elsewhere, say "use the session-handoff skill" instead.
-- **Script paths.** A skill that shells out to its own bundled scripts assumes where
-  it was installed. If you put it somewhere non-default, check those paths.
+- **Handoff save and resume work anywhere.** They only read and write markdown and
+  run `git status` / `git log`. Nothing is Claude-specific.
+- **Transcript archiving is implemented for Claude Code and GitHub Copilot only.**
+  Those are the two chat-history formats the bundled scripts know how to find and
+  read. On other agents the handoff itself is unaffected — there is simply no
+  transcript to attach, since each one stores its history differently or not at all.
+- **`AskUserQuestion` is a Claude Code tool.** The skill uses it to offer the
+  archive options as multiple choice. An agent without it should just ask in plain
+  text; the flow degrades rather than breaks.
+- **Bundled script paths resolve themselves.** `SKILL.md` locates its own `scripts/`
+  folder relative to wherever the skill was loaded, so a non-default install
+  location needs no edit.
 
 ## Read them before you trust them
 
