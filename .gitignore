@@ -1,2 +1,7 @@
 __pycache__/
 *.pyc
+
+# Session handoffs and archived transcripts. Local working notes only:
+# transcripts contain full conversation text (emails, unrelated file paths,
+# employer-internal detail) and must never reach a public remote.
+.claude/
