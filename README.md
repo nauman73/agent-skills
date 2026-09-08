@@ -27,16 +27,8 @@ parts that don't match how you work.
 
 ### Claude Code plugin
 
-Type these **at the Claude Code prompt** — they are Claude Code commands, not shell
-commands:
-
-```
-/plugin marketplace add nauman73/agent-skills
-/plugin install nh-workbench@nauman73
-```
-
-Or run the equivalents **in your shell**, which is easier to script and shows plain
-output:
+**In your shell.** This route works wherever the `claude` CLI is installed, so it is
+the one to use:
 
 ```bash
 claude plugin marketplace add nauman73/agent-skills
@@ -45,10 +37,17 @@ claude plugin details nh-workbench                   # inventory + token cost
 claude plugin list
 ```
 
+The same operations exist as `/plugin` commands typed at the prompt **in the terminal
+CLI** — `/plugin marketplace add nauman73/agent-skills`, then
+`/plugin install nh-workbench@nauman73`. Note that **`/plugin` is not available in
+the VS Code extension**, which answers `/plugin isn't available in this environment`.
+Install from a shell instead; the extension loads and runs installed plugins
+normally, it just cannot manage them.
+
 Skills arrive namespaced — `/nh-workbench:session-handoff`. Start a new session
-afterwards; a running one will not see them. Later on, `marketplace update` pulls new
-skills, `claude plugin update nh-workbench` moves to the latest version, and
-`/plugin` or `claude plugin uninstall nh-workbench` removes the set.
+afterwards; a running one will not see them. Later, `claude plugin marketplace update`
+pulls new skills, `claude plugin update nh-workbench` moves to the latest version, and
+`claude plugin uninstall nh-workbench` removes the set.
 
 > **Already have one of these skills in `~/.claude/skills/`?** You will then have it
 > twice — once unnamespaced from your own folder, once as
