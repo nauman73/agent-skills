@@ -27,8 +27,24 @@ parts that don't match how you work.
 
 ### Claude Code plugin
 
-**In your shell.** This route works wherever the `claude` CLI is installed, so it is
-the one to use:
+At the Claude Code prompt:
+
+```
+/plugin marketplace add nauman73/agent-skills
+/plugin install nh-workbench@nauman73
+```
+
+Typing `/plugin` on its own opens the plugin manager, where you can browse what is
+installed, enable or disable a set, and configure it — worth knowing, as it is the
+quickest way to turn these skills off again without uninstalling.
+
+> **⚠ `/plugin` works only in the terminal CLI.** The VS Code extension answers
+> `/plugin isn't available in this environment`. Use the shell commands below there
+> instead — the extension loads and runs installed plugins normally, it just cannot
+> manage them.
+
+**In your shell** — works wherever the `claude` CLI is installed, including for VS
+Code extension users:
 
 ```bash
 claude plugin marketplace add nauman73/agent-skills
@@ -37,17 +53,10 @@ claude plugin details nh-workbench                   # inventory + token cost
 claude plugin list
 ```
 
-The same operations exist as `/plugin` commands typed at the prompt **in the terminal
-CLI** — `/plugin marketplace add nauman73/agent-skills`, then
-`/plugin install nh-workbench@nauman73`. Note that **`/plugin` is not available in
-the VS Code extension**, which answers `/plugin isn't available in this environment`.
-Install from a shell instead; the extension loads and runs installed plugins
-normally, it just cannot manage them.
-
 Skills arrive namespaced — `/nh-workbench:session-handoff`. Start a new session
-afterwards; a running one will not see them. Later, `claude plugin marketplace update`
-pulls new skills, `claude plugin update nh-workbench` moves to the latest version, and
-`claude plugin uninstall nh-workbench` removes the set.
+afterwards; a running one will not see them. Later, `marketplace update` pulls new
+skills, `plugin update nh-workbench` moves to the latest version, and
+`plugin uninstall nh-workbench` removes the set — each available in both forms.
 
 > **Already have one of these skills in `~/.claude/skills/`?** You will then have it
 > twice — once unnamespaced from your own folder, once as
