@@ -22,6 +22,7 @@ parts that don't match how you work.
 | Skill | What it does |
 |---|---|
 | [`session-handoff`](skills/session-handoff/) | Carries one task across a cleared or compacted session. Writes a self-contained snapshot — goal, state, next step, decisions, blockers — and can archive the full Claude Code or GitHub Copilot transcript alongside it |
+| [`smart-commit`](skills/smart-commit/) | Commits in the format the branch already uses. Stages explicitly rather than with `add -A`, asks before including untracked files, and shows the finished message for approval before anything is written |
 
 ## Installing
 

@@ -1,0 +1,4 @@
+# Seed conventions are illustrative, not universal. This one is specific to a
+# separate deployment of this skill and is deliberately not published here;
+# users define their own conventions on first run.
+references/conventions/crmc-jira.md
