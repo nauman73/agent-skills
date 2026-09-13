@@ -85,8 +85,8 @@ the skills.
 At the Claude Code prompt:
 
 ```
-/plugin marketplace add https://github.com/nauman73/agent-skills.git
-/plugin install nh-workbench@nauman73
+/plugin marketplace add https://github.com/nauman73/agent-workbench.git
+/plugin install nh-workbench@nh-agent-workbench
 ```
 
 Typing `/plugin` on its own opens the plugin manager, where you can browse what is
@@ -102,9 +102,9 @@ quickest way to turn these off again without uninstalling.
 Code extension users:
 
 ```bash
-claude plugin marketplace add https://github.com/nauman73/agent-skills.git
-claude plugin install nh-workbench@nauman73          # --scope user|project|local
-claude plugin details nh-workbench                   # inventory + token cost
+claude plugin marketplace add https://github.com/nauman73/agent-workbench.git
+claude plugin install nh-workbench@nh-agent-workbench          # --scope user|project|local
+claude plugin details nh-workbench                            # inventory + token cost
 claude plugin list
 ```
 
@@ -135,7 +135,7 @@ this repo's root-level `skills/` directory on its own, and reads the manifests i
 `.claude-plugin/` too:
 
 ```bash
-REPO=https://github.com/nauman73/agent-skills.git
+REPO=https://github.com/nauman73/agent-workbench.git
 
 npx skills add $REPO --list                      # inspect first
 npx skills add $REPO --skill session-handoff     # one skill
@@ -154,10 +154,10 @@ list.
 **By hand.** A skill is a directory, so put it where your agent looks:
 
 ```bash
-git clone https://github.com/nauman73/agent-skills.git
+git clone https://github.com/nauman73/agent-workbench.git
 
-cp -r agent-skills/skills/session-handoff your-project/.claude/skills/   # one project
-cp -r agent-skills/skills/session-handoff ~/.claude/skills/              # everywhere
+cp -r agent-workbench/skills/session-handoff your-project/.claude/skills/   # one project
+cp -r agent-workbench/skills/session-handoff ~/.claude/skills/              # everywhere
 ```
 
 Start a new session, or run `/skills`, and it will be picked up.

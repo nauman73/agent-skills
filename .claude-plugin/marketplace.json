@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
-  "name": "nauman73",
+  "name": "nh-agent-workbench",
   "description": "Agent Workbench - skills and hooks for engineering work with coding agents",
   "owner": {
     "name": "Nauman Hameed",
@@ -16,8 +16,8 @@
         "name": "Nauman Hameed",
         "url": "https://github.com/nauman73"
       },
-      "homepage": "https://github.com/nauman73/agent-skills",
-      "repository": "https://github.com/nauman73/agent-skills",
+      "homepage": "https://github.com/nauman73/agent-workbench",
+      "repository": "https://github.com/nauman73/agent-workbench",
       "license": "MIT",
       "category": "productivity",
       "keywords": [

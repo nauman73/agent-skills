@@ -76,8 +76,8 @@ plugin's identity; every skill under `skills/` ships inside it.
 **Installs as:**
 
 ```
-claude plugin marketplace add https://github.com/nauman73/agent-skills.git
-claude plugin install nh-workbench@nauman73
+claude plugin marketplace add https://github.com/nauman73/agent-workbench.git
+claude plugin install nh-workbench@nh-agent-workbench
 ```
 
 **Invoked as:** `/nh-workbench:session-handoff`
@@ -104,8 +104,8 @@ For this repo, the `session-handoff` entry would read:
   "description": "Save or resume a structured task-state snapshot under the project's .claude/ folder, so in-flight work survives a /clear, a compaction, or a move to another machine.",
   "version": "1.0.0",
   "author": { "name": "Nauman Hameed", "url": "https://github.com/nauman73" },
-  "homepage": "https://github.com/nauman73/agent-skills",
-  "repository": "https://github.com/nauman73/agent-skills",
+  "homepage": "https://github.com/nauman73/agent-workbench",
+  "repository": "https://github.com/nauman73/agent-workbench",
   "license": "MIT",
   "category": "productivity",
   "keywords": ["skills", "session-handoff", "context-management"]
@@ -117,7 +117,7 @@ plugin. Anthropic's official marketplace uses this shape for `box`, a flat `skil
 no `plugin.json` anywhere, whose single entry claims five skill folders by path.
 
 **Installs as:** one command per skill —
-`claude plugin install session-handoff@nauman73`
+`claude plugin install session-handoff@nh-agent-workbench`
 
 **Invoked as:** `/session-handoff:session-handoff` (the `skill-creator:skill-creator` style)
 
