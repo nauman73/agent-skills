@@ -85,7 +85,7 @@ the skills.
 At the Claude Code prompt:
 
 ```
-/plugin marketplace add nauman73/agent-skills
+/plugin marketplace add https://github.com/nauman73/agent-skills.git
 /plugin install nh-workbench@nauman73
 ```
 
@@ -102,7 +102,7 @@ quickest way to turn these off again without uninstalling.
 Code extension users:
 
 ```bash
-claude plugin marketplace add nauman73/agent-skills
+claude plugin marketplace add https://github.com/nauman73/agent-skills.git
 claude plugin install nh-workbench@nauman73          # --scope user|project|local
 claude plugin details nh-workbench                   # inventory + token cost
 claude plugin list
@@ -123,14 +123,6 @@ in both forms.
 > if you already have it wired into `~/.claude/settings.json`, remove that
 > registration when you install the plugin, or it runs twice per turn.
 
-> **`Permission denied (publickey)` on the first command?** The `owner/repo` form is
-> resolved over SSH, and yours isn't authenticating. Newer Claude Code builds retry
-> over HTTPS by themselves; if yours doesn't, name the protocol explicitly:
->
-> ```
-> /plugin marketplace add https://github.com/nauman73/agent-skills.git
-> ```
-
 ### Any other agent — the skills
 
 Nothing below carries the hook. A hook has to be *registered* with the harness, and
@@ -143,10 +135,12 @@ this repo's root-level `skills/` directory on its own, and reads the manifests i
 `.claude-plugin/` too:
 
 ```bash
-npx skills add nauman73/agent-skills --list                      # inspect first
-npx skills add nauman73/agent-skills --skill session-handoff     # one skill
-npx skills add nauman73/agent-skills -a claude-code -a cursor    # chosen agents
-npx skills add nauman73/agent-skills -g                          # global install
+REPO=https://github.com/nauman73/agent-skills.git
+
+npx skills add $REPO --list                      # inspect first
+npx skills add $REPO --skill session-handoff     # one skill
+npx skills add $REPO -a claude-code -a cursor    # chosen agents
+npx skills add $REPO -g                          # global install
 ```
 
 Installs are symlinks by default — add `--copy` for independent files you can edit
@@ -154,8 +148,8 @@ freely, and `-y` to run unattended. `--skill` repeats per skill; it does not tak
 list.
 
 > **Note:** this CLI reports install telemetry for repositories GitHub confirms are
-> public, which includes this one. `DISABLE_TELEMETRY=1` or `DO_NOT_TRACK=1` turns it
-> off, and neither the plugin nor the manual route below involves it.
+> public. `DISABLE_TELEMETRY=1` or `DO_NOT_TRACK=1` turns it off, and neither the
+> plugin nor the by-hand route below involves it.
 
 **By hand.** A skill is a directory, so put it where your agent looks:
 

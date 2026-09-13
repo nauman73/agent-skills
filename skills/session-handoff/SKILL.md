@@ -143,16 +143,45 @@ where the skill folder is, locate `scripts/copilot_discover.py` by searching for
 rather than guessing a root, and if it genuinely is not on disk, say so plainly
 instead of running a path you have not verified.
 
+### Step 0 — check the handoff for saved preferences
+
+**Before asking anything, read the handoff doc for a `## Handoff preferences` section.** If one is
+present, it records what the user chose the last time this task was saved. Honour it and **skip
+Steps 1, 1.5, 2 and 3 entirely** — go straight to Step 4 (locate) with those answers.
+
+```markdown
+## Handoff preferences (for subsequent saves of this task)
+
+- **Save a transcript:** yes, always
+- **Environment:** Claude Code
+- **Format:** `.md`
+- **Location:** default — `.claude/transcript-<slug>-<YYYY-MM-DD-HHMM>.md`
+```
+
+If the block says transcripts are not wanted, skip the whole transcript flow and go to Step 7.
+
+**Why the handoff and not persistent memory.** This preference is scoped to *one task and every
+session that resumes it* — which is exactly the handoff doc's lifetime. Memory is scoped to a
+user or a project, so a default saved while working in one repo silently fails to apply in
+another, and the questions come back. The doc also travels with the task across repos, machines
+and agent tools, and the user can change their mind by editing one visible line rather than
+asking you to rewrite a memory they cannot see.
+
+Asking is still correct the **first** time a task is saved — a new handoff has no block to read.
+Ask once, then record the answers (Step 6) so it is asked only once per task, not once per
+session. Do not ask whether to make the answers a default; recording them in the doc *is* the
+mechanism, and the user can edit or delete the block.
+
 ### Step 1 — ask the user
 
-Use `AskUserQuestion` with a single question:
+Only if Step 0 found no preferences block. Use `AskUserQuestion` with a single question:
 
 > **Save the full session transcript alongside this handoff?**
 > A future session can refer to it if the handoff alone isn't enough.
 
 Options:
 - **Yes, save it** — proceed to Step 2.
-- **No, skip it** — finish the save and print the "To resume…" line; do not add a transcript reference to the handoff. Stop here.
+- **No, skip it** — record the answer via the Step 6 preferences block (so this task does not ask again), then finish the save and print the "To resume…" line. Do not add a transcript reference to the handoff.
 
 The wording "alongside" matters — the user should understand the transcript is *supplementary*, not a replacement for the handoff.
 
@@ -298,9 +327,30 @@ All flags on both converters are optional; with none, each still emits a valid h
 
 If any copy or conversion fails (path too long, permission denied, disk full, script error), report the exact error to the user and ask how to proceed. Do not write a misleading reference into the handoff for a file that does not actually exist or is empty.
 
-### Step 6 — reference the transcript in the handoff
+### Step 6 — record the preferences, and reference the transcript
 
-Open the handoff doc and add a new section just before "How to resume":
+**First, if Step 0 found no preferences block, write one now** — just before the transcript
+section — recording the answers the user actually gave in Steps 1–3, so this task never asks
+again:
+
+```markdown
+## Handoff preferences (for subsequent saves of this task)
+
+- **Save a transcript:** <yes, always | no>
+- **Environment:** <Claude Code | GitHub Copilot>
+- **Format:** <`.md` | `.jsonl`>
+- **Location:** <default — `.claude/transcript-<slug>-<YYYY-MM-DD-HHMM>.<ext>` | the custom path given>
+
+A future SAVE for this task should honour these and **skip the transcript questions entirely**.
+If the answer ever changes, edit this block — it is the source of truth for this task.
+```
+
+Write it even when the user declined a transcript: "no" is just as much an answer worth not
+re-asking. In that case write the block, skip the transcript section, and go to Step 7.
+
+If Step 0 *did* find a block, leave it exactly as it is — the user may have edited it deliberately.
+
+**Then** add the transcript reference as a new section just before "How to resume":
 
 ```markdown
 ## Full session transcript (reference only)
@@ -324,6 +374,10 @@ If a handoff for this task already exists (check `.claude/handoff-<slug>.md` fir
 - Bump the `Created:` line to `Updated: <new timestamp>` (keep the original Created date on a separate line).
 - Rewrite "Current state" and "Next step" to reflect now, not history. The future session does not need a changelog of how the task evolved — it needs an accurate snapshot of where things stand.
 - Carry forward "Key decisions" entries that still apply; drop ones that have been superseded.
+- **Preserve any `## Handoff preferences` block verbatim.** It is the record of what the user
+  already chose for this task, and rewriting or dropping it makes the transcript questions come
+  back on the next save. Change it only if the user asks for a different transcript choice this
+  time — in which case update the block to match what they just chose.
 
 ## Quality checks before finishing
 

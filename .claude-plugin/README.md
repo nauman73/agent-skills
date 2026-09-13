@@ -76,7 +76,7 @@ plugin's identity; every skill under `skills/` ships inside it.
 **Installs as:**
 
 ```
-claude plugin marketplace add nauman73/agent-skills
+claude plugin marketplace add https://github.com/nauman73/agent-skills.git
 claude plugin install nh-workbench@nauman73
 ```
 
@@ -113,7 +113,7 @@ For this repo, the `session-handoff` entry would read:
 ```
 
 The entry `name` becomes the invocation namespace, so it is named for the skill rather than the
-author. Anthropic's official marketplace uses this shape for `box`, a flat `skills/` repo with
+plugin. Anthropic's official marketplace uses this shape for `box`, a flat `skills/` repo with
 no `plugin.json` anywhere, whose single entry claims five skill folders by path.
 
 **Installs as:** one command per skill —
@@ -185,10 +185,10 @@ enable/disable and versioning; a user pays context only for the skills they inst
   no dependency-shaped key exists. A skill referencing a skill from another plugin fails
   silently for anyone who installed only one of them — bare and namespaced references fail
   alike, since the problem is absence, not addressing.
-- **Namespace cross-references in `SKILL.md` regardless of mechanism.** A bare `/session-handoff`
-  does resolve when unambiguous, but this repo's skills also exist at `~/.claude/skills/`, and
-  which copy a bare name binds to is unspecified. Namespaced references are deterministic and
-  fail findably if a skill is later regrouped.
+- **Namespace cross-references in `SKILL.md` regardless of mechanism.** A bare
+  `/session-handoff` does resolve when unambiguous, but a user may also have the same skill in
+  their own `~/.claude/skills/`, and which copy a bare name binds to is unspecified. Namespaced
+  references are deterministic and fail findably if a skill is later regrouped.
 
 **Untested:** whether the entry `name` or a leftover `plugin.json` `name` governs the installed
 namespace. Step 1 of A → B sidesteps the question by removing the file. Confirm with a real

@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
   "name": "nauman73",
-  "description": "Nauman Hameed's agent skills",
+  "description": "Agent Workbench - skills and hooks for engineering work with coding agents",
   "owner": {
     "name": "Nauman Hameed",
     "url": "https://github.com/nauman73"
@@ -9,9 +9,9 @@
   "plugins": [
     {
       "name": "nh-workbench",
-      "displayName": "Nauman's Agent Skills",
+      "displayName": "Agent Workbench",
       "source": "./",
-      "description": "Practical skills for engineering work with coding agents.",
+      "description": "Skills and hooks for day-to-day engineering work with coding agents.",
       "author": {
         "name": "Nauman Hameed",
         "url": "https://github.com/nauman73"
