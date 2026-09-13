@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "nh-workbench",
   "displayName": "Agent Workbench",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Skills and hooks for day-to-day engineering work with coding agents.",
   "author": {
     "name": "Nauman Hameed",
@@ -13,8 +13,10 @@
   "license": "MIT",
   "keywords": [
     "skills",
+    "hooks",
     "session-handoff",
     "smart-commit",
+    "ctx-watch",
     "context-management",
     "agentic-coding"
   ]
