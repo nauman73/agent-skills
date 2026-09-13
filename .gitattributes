@@ -7,6 +7,19 @@
 # core.autocrlf=true is enough to cause it.
 #
 # Setting it here rather than relying on contributors' local git config.
+#
+# hooks/run-ctx-watch.cmd needs LF for a different reason, and the `.cmd` extension
+# makes it look like the one file here that ought to be CRLF - so this is the note
+# that stops someone "fixing" it.
+#
+# It is a polyglot: cmd.exe runs the batch section, sh/bash runs the POSIX section
+# at the bottom. The shell section does not parse with CRLF endings, so LF wins -
+# and the batch section is written without parenthesised blocks or labels, which
+# are the constructs cmd.exe mishandles in an LF-only file. Converting the file to
+# CRLF breaks the shell branch silently: Claude Code may invoke a hook through
+# either interpreter, and a hook whose normal state is silence gives you nothing
+# to notice.
 * text=auto eol=lf
 *.py text eol=lf
 *.md text eol=lf
+*.cmd text eol=lf

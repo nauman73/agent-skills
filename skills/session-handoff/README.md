@@ -36,6 +36,11 @@ and then **stops and waits**.
 Say any of: *"resume from the handoff"*, *"pick up where we left off"*,
 *"read .claude/handoff-auth-bug.md and continue"*.
 
+You do not have to be the one who notices it is time. The [`ctx-watch`](../../hooks/)
+hook in this repo watches how full the context window is and, once it passes a
+threshold you set, has the agent offer you a SAVE — which is the moment the offer is
+worth something and the moment you are least likely to think of it yourself.
+
 ## Two design choices worth knowing
 
 **Resume does not auto-start the work.** The handoff was true when it was written.

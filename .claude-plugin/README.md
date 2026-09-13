@@ -1,8 +1,15 @@
-# Packaging: how this repo publishes its skills
+# Packaging: how this repo publishes its skills and hooks
 
 This folder holds the manifests that turn the repo into a Claude Code marketplace. The skill
 files themselves live at `skills/<name>/` and **never move** — everything described here is a
 manifest-only decision, reversible by editing one or two JSON files.
+
+Hooks live at `hooks/` and are wired up by `hooks/hooks.json`, which Claude Code loads
+automatically for an installed plugin. That file is not referenced from `plugin.json` or
+`marketplace.json`: the path is a convention the loader knows, so a plugin ships hooks simply by
+having it. `${CLAUDE_PLUGIN_ROOT}` — the only way for a hook command to name its own files — is
+**available only inside a plugin's `hooks/hooks.json`**, not in `settings.json`, which is why the
+same hook needs a hand-written absolute path when installed locally.
 
 There are two supported ways to package the same skills. Mechanism A is what this repo uses
 today. Mechanism B is the alternative, and the steps to switch in either direction are below.
@@ -26,6 +33,21 @@ repo-owned files across a sync:
 another — a seed convention file specific to a different deployment, say. A listed path that
 does not exist after the copy is reported as a warning rather than passing silently, since a
 typo there would publish the very file it was meant to withhold.
+
+## Where hooks come from
+
+The same arrangement, one folder up: `~/.claude/hooks/` is the source of truth, and
+`./tools/sync-hook.ps1` copies it into `hooks/` here. `README.md` and `.syncignore` are
+repo-owned and preserved across the sync, and `hooks.json` is repo-owned too — it is plugin
+wiring with no live counterpart, since a local install does the same job through
+`~/.claude/settings.json`. Run `./tools/sync-hook.ps1 -Check` to see drift without writing.
+
+**`sync-hook.ps1` takes no `-Name`, and that is a real difference from `sync-skill.ps1`.**
+`~/.claude/hooks/` is one flat folder with no per-hook subdivision — a hook is a script, not a
+self-describing directory — so there is nothing to name. The consequence: a second, unrelated
+hook dropped in that folder would be published by the next sync along with this one, whether or
+not you meant it to be. `.syncignore` is the only way to withhold it. Not a problem with one
+hook; worth recording so it is not rediscovered as a bug.
 
 ## Why `skills/<name>/` never moves
 
@@ -63,7 +85,8 @@ claude plugin install nh-workbench@nauman73
 **Properties:** one install command regardless of skill count; one browse row in `/plugin`;
 one version number for the whole set; every skill's `description` enters always-on context
 whenever the plugin is enabled. Coupled skills are guaranteed present together — which matters,
-because there is no dependency mechanism (see Gotchas).
+because there is no dependency mechanism (see Gotchas). One plugin root also means
+`hooks/hooks.json` is loaded exactly once, with no question about which entry owns it.
 
 ## Mechanism B — one plugin per skill (alternative)
 
@@ -125,7 +148,18 @@ enable/disable and versioning; a user pays context only for the skills they inst
 5. Update any `SKILL.md` cross-references from `/nh-workbench:<skill>` to the new namespace.
    They are greppable: `grep -rn "nh-workbench:" skills/`.
 
-6. `claude plugin validate .` — expect a clean pass.
+6. **Decide where `hooks/` goes, and check it is loaded exactly once.** Under Mechanism B every
+   entry is sourced from `"./"`, so every installed plugin's `${CLAUDE_PLUGIN_ROOT}` is the same
+   repo root — and each therefore has the same `hooks/hooks.json` sitting at its root. Whether
+   Claude Code loads that once or once per installed entry is **untested**; if it is per entry,
+   a user with two of these plugins installed runs `ctx-watch` twice on every turn, which on
+   `UserPromptSubmit` means the handoff suggestion injected twice.
+
+   The safe shape is to give the hook a plugin of its own with its own `source` directory, so
+   exactly one installed plugin has a `hooks/` at its root. Verify against a real install before
+   publishing either way — a double-firing hook is not something validate can catch.
+
+7. `claude plugin validate .` — expect a clean pass.
 
 ## Switching B → A
 
@@ -133,7 +167,8 @@ enable/disable and versioning; a user pays context only for the skills they inst
    `homepage`, `repository`, `license` (git history has the `nh-workbench` original).
 2. Collapse `marketplace.json` back to a single entry with `"source": "./"` and no `skills`
    key — omitted, it picks up everything under `skills/`.
-3. Reverse steps 4–6 above.
+3. Reverse steps 4–7 above. The hooks question disappears on the way back: one plugin means one
+   plugin root, so `hooks/hooks.json` is loaded exactly once by construction.
 
 ## Gotchas (all verified against `claude plugin validate` on 2026-09-11)
 
@@ -169,6 +204,18 @@ reference each other (`using-superpowers` routes to `brainstorming`, which route
 `writing-plans`) and share `hooks/` and `scripts/` that cannot be split across plugins.
 
 Independent tools someone would want separately → Mechanism B. A family that cites its own
-members → keep them in one plugin, whichever mechanism is in use. With a single published skill
-the two are equivalent in practice, which is why A stands: it is the status quo, and switching
-costs one JSON edit whenever a second skill makes the question real.
+members → keep them in one plugin, whichever mechanism is in use.
+
+**Shipping a hook is now a second argument for A, and a sharper one than coupling.** The
+`superpowers` precedent above already turns partly on a shared `hooks/` that "cannot be split
+across plugins"; that reasoning applies here directly rather than by analogy. The repo contains
+exactly one `hooks/` folder and every Mechanism B entry would share a plugin root with it, so B
+raises a question A does not have — see step 6 of A → B. `ctx-watch` also cross-references
+`session-handoff` in what it tells the model, which is precisely the coupling this section says
+should decide the matter: under B, a user who installed the hook's plugin and not the skill's
+gets a suggestion to run a skill they do not have, and there is no dependency mechanism to
+prevent it.
+
+That, rather than inertia, is why A stands. Switching still costs one JSON edit plus a real
+install to check the hook fires once, whenever a second reason makes the question worth
+reopening.
