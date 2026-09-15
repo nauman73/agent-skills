@@ -9,6 +9,14 @@
 
     Build residue (__pycache__, *.pyc) is never copied.
 
+    Neither is a skill-root evals\ folder. Evals are author-time: they measure a
+    skill while it is being written, nobody who installs it runs them, and the
+    agent never reads them - so they are the one part of a skill that no review
+    pass looks at, which is exactly where a machine path or a private project
+    name survives. Keeping them out is a rule about a class of file rather than
+    about any one skill, so it lives here rather than in a .syncignore per skill.
+    They stay in the source folder, where skill-creator expects to find them.
+
     Two files are owned by this repo rather than by the source folder, and are
     preserved across a sync:
 
@@ -73,8 +81,9 @@ if (Test-Path -LiteralPath $existingIgnore) {
 }
 
 $didSync  = $PSCmdlet.ShouldProcess($to, "replace with contents of $from")
-$excluded = @()
-$missing  = @()
+$excluded    = @()
+$missing     = @()
+$prunedEvals = $false
 
 if ($didSync) {
     if (Test-Path -LiteralPath $to) {
@@ -92,6 +101,15 @@ if ($didSync) {
         Remove-Item -Recurse -Force
     Get-ChildItem -LiteralPath $to -Recurse -Force -File -Filter '*.pyc' |
         Remove-Item -Force
+
+    # Evals are never published - see .DESCRIPTION. Only the skill-root folder
+    # is pruned, which is where skill-creator writes them; a nested evals\ under
+    # references\ would be someone's content rather than a test harness.
+    $evalsDir = Join-Path $to 'evals'
+    if (Test-Path -LiteralPath $evalsDir) {
+        Remove-Item -LiteralPath $evalsDir -Recurse -Force
+        $prunedEvals = $true
+    }
 
     if ($null -ne $keptReadme) {
         Set-Content -LiteralPath $existingReadme -Value $keptReadme -NoNewline
@@ -126,6 +144,10 @@ if (-not $didSync) {
 
 Write-Host "Synced '$Name' ->  skills\$Name" -ForegroundColor Green
 
+if ($prunedEvals) {
+    Write-Host "Excluded (evals are never published):" -ForegroundColor Cyan
+    Write-Host "  evals\" -ForegroundColor Cyan
+}
 if ($excluded.Count -gt 0) {
     Write-Host "Excluded by .syncignore:" -ForegroundColor Cyan
     $excluded | ForEach-Object { Write-Host "  $_" -ForegroundColor Cyan }

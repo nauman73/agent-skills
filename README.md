@@ -51,6 +51,7 @@ say in its own section how far it reaches; the answer is not the same for all of
 
 | Name | Type | Works with |
 |---|---|---|
+| [`jira-story`](skills/jira-story/) | skill | Any agent · any OS |
 | [`session-handoff`](skills/session-handoff/) | skill | Any agent · any OS |
 | [`smart-commit`](skills/smart-commit/) | skill | Any agent · any OS |
 | [`ctx-watch`](hooks/) | hook | Claude Code, plugin install only · Windows |
@@ -63,6 +64,10 @@ rather than an error every turn.
 
 What each one does:
 
+- **`jira-story`** — turns a plan, design doc or short brief into one story-shaped
+  markdown document: title, type, description, value statement, numbered acceptance
+  criteria, definition of done, out of scope. Infers the story type from what the work
+  produces, and defines when to reconcile the story with the code once it drifts.
 - **`session-handoff`** — carries one task across a cleared or compacted session.
   Writes a self-contained snapshot — goal, state, next step, decisions, blockers —
   and can archive the full Claude Code or GitHub Copilot transcript alongside it.
